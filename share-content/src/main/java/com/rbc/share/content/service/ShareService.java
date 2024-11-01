@@ -4,8 +4,12 @@ package com.rbc.share.content.service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.rbc.share.common.resp.CommonResp;
 import com.rbc.share.content.domain.entity.MidUserShare;
 import com.rbc.share.content.domain.entity.Share;
+import com.rbc.share.content.domain.entity.User;
+import com.rbc.share.content.domain.resp.ShareResp;
+import com.rbc.share.content.feign.UserService;
 import com.rbc.share.content.mapper.MidUserShareMapper;
 import com.rbc.share.content.mapper.ShareMapper;
 import jakarta.annotation.Resource;
@@ -21,6 +25,8 @@ public class ShareService {
 
     @Resource
     private ShareMapper shareMapper;
+
+    private UserService userService;
 
     @Resource
     private MidUserShareMapper midUserShareMapper;
@@ -66,5 +72,18 @@ public class ShareService {
         }
 
         return sharesDeal;
+    }
+
+    public ShareResp findById(Long shareId) {
+        Share share = shareMapper.selectById(shareId);
+
+        // 调用 feign 方法，根据用户 id 查询到用户信息
+        CommonResp<User> commonResp = userService.getUser(share.getUserId());
+
+        return ShareResp.builder()
+                .share(share)
+                .nickname(commonResp.getData().getNickname())
+                .avatarUrl(commonResp.getData().getAvatarUrl())
+                .build();
     }
 }

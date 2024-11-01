@@ -5,6 +5,7 @@ import com.rbc.share.common.resp.CommonResp;
 import com.rbc.share.common.util.JwtUtil;
 import com.rbc.share.content.domain.entity.Notice;
 import com.rbc.share.content.domain.entity.Share;
+import com.rbc.share.content.domain.resp.ShareResp;
 import com.rbc.share.content.service.NoticeService;
 import com.rbc.share.content.service.ShareService;
 import jakarta.annotation.Resource;
@@ -75,4 +76,18 @@ public class ShareController {
 
         return userId;
     }
+
+    /**
+     * 根据 id 查询分享内容
+     * @param id 分享内容 id
+     * @return 分享内容
+     */
+    @GetMapping("/{id}")
+    public CommonResp<ShareResp> getShareById(@PathVariable Long id) {
+        ShareResp shareResp = shareService.findById(id);
+        CommonResp<ShareResp> commonResp = new CommonResp<>();
+        commonResp.setData(shareResp);
+        return commonResp;
+    }
+
 }
