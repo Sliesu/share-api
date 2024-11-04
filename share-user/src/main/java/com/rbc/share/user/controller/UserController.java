@@ -2,6 +2,7 @@ package com.rbc.share.user.controller;
 
 import com.rbc.share.common.resp.CommonResp;
 import com.rbc.share.user.domain.dto.LoginDTO;
+import com.rbc.share.user.domain.dto.UserAddBonusMsgDTO;
 import com.rbc.share.user.domain.entity.User;
 import com.rbc.share.user.domain.resp.UserLoginResp;
 import com.rbc.share.user.service.UserService;
@@ -46,4 +47,24 @@ public class UserController {
         resp.setData(user);
         return resp;
     }
+
+    @PostMapping("/updateBonus")
+    public CommonResp<User> updateBonus(@RequestBody UserAddBonusMsgDTO userAddBonusMsgDTO) {
+        Long userId = userAddBonusMsgDTO.getUserId();
+
+        // 更新用户积分
+        userService.updateBonus(UserAddBonusMsgDTO.builder()
+                .userId(userId)
+                .bonus(userAddBonusMsgDTO.getBonus())
+                .description("兑换分享内容")
+                .event("BUY")
+                .build());
+
+        // 获取更新后的用户信息
+        CommonResp<User> resp = new CommonResp<>();
+        resp.setData(userService.findById(userId));
+
+        return resp;
+    }
+
 }

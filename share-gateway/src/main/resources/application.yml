@@ -12,6 +12,9 @@ spring:
         password: nacos
         namespace: dev
     gateway:
+      discovery:
+        locator:
+           enabled: true
       routes:
         - id: route-user
           uri: lb://user-service

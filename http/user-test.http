@@ -45,3 +45,19 @@ Accept: application/json
 GET http://localhost:8000/content-service/share/list
 Accept: application/json
 token: {{token}}
+
+###
+GET http://localhost:8000/content-service/share/3
+Accept: application/json
+token: {{token}}
+
+###
+POST http://localhost:8000/user-service/user/updateBonus
+Accept: application/json
+token: {{token}}
+Content-Type: application/json
+
+{
+   "userId": 1,
+   "bonus": 100
+}

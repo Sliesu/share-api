@@ -7,12 +7,16 @@ import com.rbc.share.common.exception.BusinessExceptionEnum;
 import com.rbc.share.common.util.JwtUtil;
 import com.rbc.share.common.util.SnowUtil;
 import com.rbc.share.user.domain.dto.LoginDTO;
+import com.rbc.share.user.domain.dto.UserAddBonusMsgDTO;
+import com.rbc.share.user.domain.entity.BonusEventLog;
 import com.rbc.share.user.domain.entity.User;
 import com.rbc.share.user.domain.resp.UserLoginResp;
+import com.rbc.share.user.mapper.BonusEventLogMapper;
 import com.rbc.share.user.mapper.UserMapper;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -22,11 +26,15 @@ import java.util.Map;
  * UserService 处理用户业务逻辑
  * @author DingYihang
  */
+@Slf4j
 @Service
 public class UserService {
 
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private BonusEventLogMapper bonusEventLogMapper;
 
     /**
      * 统计用户数量
@@ -108,5 +116,26 @@ public class UserService {
 
         // 返回新注册用户的ID
         return saveUser.getId();
+    }
+
+    public void updateBonus(UserAddBonusMsgDTO userAddBonusMsgDTO) {
+        // 1. 为用户修改积分
+        Long userId = userAddBonusMsgDTO.getUserId();
+        Integer bonus = userAddBonusMsgDTO.getBonus();
+
+        User user = userMapper.selectById(userId);
+        user.setBonus(user.getBonus() + bonus);
+        userMapper.update(user, new QueryWrapper<User>().lambda().eq(User::getId, userId));
+
+        // 2. 记录日志到 bonus_event_log 表
+        bonusEventLogMapper.insert(BonusEventLog.builder()
+                .userId(userId)
+                .value(bonus)
+                .event(userAddBonusMsgDTO.getEvent())
+                .description(userAddBonusMsgDTO.getDescription())
+                .createTime(new Date())
+                .build());
+
+        log.info("用户ID: {} 积分更新成功，增加积分: {}", userId, bonus);
     }
 }

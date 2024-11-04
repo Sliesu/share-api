@@ -3,6 +3,7 @@ package com.rbc.share.content.controller;
 import cn.hutool.json.JSONObject;
 import com.rbc.share.common.resp.CommonResp;
 import com.rbc.share.common.util.JwtUtil;
+import com.rbc.share.content.domain.dto.ExchangeDTO;
 import com.rbc.share.content.domain.entity.Notice;
 import com.rbc.share.content.domain.entity.Share;
 import com.rbc.share.content.domain.resp.ShareResp;
@@ -89,5 +90,15 @@ public class ShareController {
         commonResp.setData(shareResp);
         return commonResp;
     }
+
+    @PostMapping("/exchange")
+    public CommonResp<Share> exchange(@RequestBody ExchangeDTO exchangeDTO) {
+        CommonResp<Share> resp = new CommonResp<>();
+        resp.setData(shareService.exchange(exchangeDTO)); // 调用服务层的 exchange 方法
+        return resp; // 返回响应
+    }
+
+
+
 
 }
