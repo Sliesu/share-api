@@ -15,7 +15,7 @@ POST http://localhost:8000/user-service/user/login
 Content-Type: application/json
 
 {
-  "phone": "15906273608",
+  "phone": "15906278988",
   "password": "123456"
 }
 
@@ -69,13 +69,13 @@ token: {{token}}
 
 {
 "userId": 1,
-"author": "尤雨溪",
-"title": "详解 Vue.js 3",
+"author": "dingyihang",
+"title": "SpringCloud微服务入门",
 "isOriginal": 1,
-"price": 20,
+"price": 200,
 "downloadUrl": "https://cn.vuejs.org",
 "cover": "http://niit-soft.oss-cn-hangzhou.aliyuncs.com/share-app/vue3.png",
-"summary": "详解 Vue.js 3, 详解 Vue.js 3, 详解 Vue.js 3"
+"summary": "详解 SpringCloud, 详解 SpringCloud, 详解 SpringCloud"
 }
 
 ###
@@ -87,3 +87,9 @@ token: {{token}}
 GET http://localhost:8000/content-service/share/admin/list
 Accept: application/json
 token: {{token}}
+
+
+###
+POST http://localhost:8000/content-service/share/admin/audit/1854899673838546946
+token: {{token}}
+Content-Type: application/json

@@ -21,3 +21,10 @@ spring:
 logging:
   level:
     com.rbc.share.content.mapper: debug
+
+rocketmq:
+  name-server: 47.122.68.58:9876
+  producer:
+    group: review_group_dyh
+  consumer:
+    group: bonus_group_dyh

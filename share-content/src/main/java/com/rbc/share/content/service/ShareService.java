@@ -79,6 +79,12 @@ public class ShareService {
         return sharesDeal;
     }
 
+    /**
+     * 根据 id 查询分享内容
+     *
+     * @param shareId 分享内容的 id
+     * @return ShareResp
+     */
     public ShareResp findById(Long shareId) {
         Share share = shareMapper.selectById(shareId);
 
@@ -92,6 +98,11 @@ public class ShareService {
                 .build();
     }
 
+    /**
+     * 兑换分享内容
+     * @param exchangeDTO 用户 id 和分享 id
+     * @return Share
+     */
     public Share exchange(ExchangeDTO exchangeDTO) {
         Long userId = exchangeDTO.getUserId();
         Long shareId = exchangeDTO.getShareId();
@@ -206,7 +217,14 @@ public class ShareService {
         return shareMapper.selectList(wrapper);
     }
 
-
+    /**
+     * 修改审核状态
+     */
+    public void approveShare(Share share){
+        share.setAuditStatus("PASSED");
+        share.setReason("通过审核");
+        shareMapper.updateById(share);
+    }
 
 
 }

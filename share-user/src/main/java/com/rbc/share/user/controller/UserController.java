@@ -56,8 +56,8 @@ public class UserController {
         userService.updateBonus(UserAddBonusMsgDTO.builder()
                 .userId(userId)
                 .bonus(userAddBonusMsgDTO.getBonus())
-                .description("兑换分享内容")
-                .event("BUY")
+                .description(userAddBonusMsgDTO.getDescription())
+                .event(userAddBonusMsgDTO.getEvent())
                 .build());
 
         // 获取更新后的用户信息
