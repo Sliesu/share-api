@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.rbc.share.common.resp.CommonResp;
 import com.rbc.share.content.domain.dto.ExchangeDTO;
+import com.rbc.share.content.domain.dto.ShareRequestDTO;
 import com.rbc.share.content.domain.dto.UserAddBonusMsgDTO;
 import com.rbc.share.content.domain.entity.MidUserShare;
 import com.rbc.share.content.domain.entity.Share;
@@ -17,6 +18,7 @@ import com.rbc.share.content.mapper.ShareMapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -134,5 +136,77 @@ public class ShareService {
 
         return share; // 返回分享内容
     }
+
+    /**
+     * 投稿
+     *
+     * @param shareRequestDTO 投稿参数
+     * @return int
+     */
+    public int contribute(ShareRequestDTO shareRequestDTO) {
+        Share share = Share.builder()
+                .isOriginal(shareRequestDTO.getIsOriginal())  // 注意修正了 getIsOriginal 方法的名称
+                .author(shareRequestDTO.getAuthor())
+                .price(shareRequestDTO.getPrice())
+                .downloadUrl(shareRequestDTO.getDownloadUrl())
+                .summary(shareRequestDTO.getSummary())
+                .buyCount(0)
+                .title(shareRequestDTO.getTitle())
+                .userId(shareRequestDTO.getUserId())
+                .cover(shareRequestDTO.getCover())
+                .showFlag(false)
+                .auditStatus("NOT_YET")  // 注意修正了 auditStatus 字段的名称
+                .reason("未审核")  // 字符串要使用英文引号
+                .createTime(new Date())
+                .updateTime(new Date())
+                .build();
+
+        return shareMapper.insert(share);
+    }
+
+    /**
+     * 获取用户投稿列表（带分⻚）
+     * @param pageNo 分页页码
+     * @param pageSize 分页大小
+     * @param userId 用户ID
+     * @return List<Share>
+     */
+    public List<Share> myContribute(Integer pageNo, Integer pageSize, Long userId) {
+        LambdaQueryWrapper<Share> wrapper = new LambdaQueryWrapper<>();
+
+        // 设置排序方式
+        wrapper.orderByDesc(Share::getId);
+
+        // 设置查询条件：根据 userId 查询
+        wrapper.eq(Share::getUserId, userId);
+
+        // 创建分页对象
+        Page<Share> page = Page.of(pageNo, pageSize);
+
+        // 执行查询并返回结果
+        return shareMapper.selectList(page, wrapper);
+    }
+
+    /**
+     * 查询尚未审核且显示标志为 false 的 Share 列表
+     *
+     * @return List<Share> 返回符合条件的 Share 列表
+     */
+    public List<Share> queryShareNotYet() {
+        LambdaQueryWrapper<Share> wrapper = new LambdaQueryWrapper<>();
+
+        // 按照 id 字段降序排列
+        wrapper.orderByDesc(Share::getId);
+
+        // 查询 auditStatus 为 "NOT YET" 且 showFlag 为 false 的 Share
+        wrapper.eq(Share::getAuditStatus, "NOT_YET")
+                .eq(Share::getShowFlag, false);
+
+        // 执行查询并返回结果
+        return shareMapper.selectList(wrapper);
+    }
+
+
+
 
 }

@@ -4,6 +4,7 @@ import cn.hutool.json.JSONObject;
 import com.rbc.share.common.resp.CommonResp;
 import com.rbc.share.common.util.JwtUtil;
 import com.rbc.share.content.domain.dto.ExchangeDTO;
+import com.rbc.share.content.domain.dto.ShareRequestDTO;
 import com.rbc.share.content.domain.entity.Notice;
 import com.rbc.share.content.domain.entity.Share;
 import com.rbc.share.content.domain.resp.ShareResp;
@@ -98,7 +99,53 @@ public class ShareController {
         return resp; // 返回响应
     }
 
+    @PostMapping("/contribute")
+    public CommonResp<Integer> contribute(
+            @RequestBody ShareRequestDTO shareRequestDTO,
+            @RequestHeader(value = "token", required = false) String token) {
 
+        // 从token中获取userId
+        Long userId = getUserIdFromToken(token);
+
+        // 设置用户ID
+        shareRequestDTO.setUserId(userId);
+
+        // 调用service层方法进行投稿
+        CommonResp<Integer> resp = new CommonResp<>();
+        resp.setData(shareService.contribute(shareRequestDTO));
+
+        return resp;
+    }
+
+    /**
+     * 获取用户投稿的内容
+     * @param pageNo 页码
+     * @param pageSize 每页数量
+     * @param token token
+     * @return
+     */
+    @GetMapping("/myContribute")
+    public CommonResp<List<Share>> myContribute(
+            @RequestParam(required = false, defaultValue = "1") Integer pageNo,
+            @RequestParam(required = false, defaultValue = "3") Integer pageSize,
+            @RequestHeader(value = "token", required = false) String token) {
+
+        // 限制 pageSize 的最大值
+        if (pageSize > MAX) {
+            pageSize = MAX;
+        }
+
+        // 从 token 获取 userId
+        Long userId = getUserIdFromToken(token);
+
+        // 创建响应对象
+        CommonResp<List<Share>> resp = new CommonResp<>();
+
+        // 调用业务逻辑层方法
+        resp.setData(shareService.myContribute(pageNo, pageSize, userId));
+
+        return resp;
+    }
 
 
 }

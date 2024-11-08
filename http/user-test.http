@@ -61,3 +61,29 @@ Content-Type: application/json
    "userId": 1,
    "bonus": 100
 }
+
+###
+POST http://localhost:8000/content-service/share/contribute
+Content-Type: application/json
+token: {{token}}
+
+{
+"userId": 1,
+"author": "尤雨溪",
+"title": "详解 Vue.js 3",
+"isOriginal": 1,
+"price": 20,
+"downloadUrl": "https://cn.vuejs.org",
+"cover": "http://niit-soft.oss-cn-hangzhou.aliyuncs.com/share-app/vue3.png",
+"summary": "详解 Vue.js 3, 详解 Vue.js 3, 详解 Vue.js 3"
+}
+
+###
+GET http://localhost:8000/content-service/share/myContribute?pageNo=1&pageSize=1
+Content-Type:application/json
+token: {{token}}
+
+###
+GET http://localhost:8000/content-service/share/admin/list
+Accept: application/json
+token: {{token}}
